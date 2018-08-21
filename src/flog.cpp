@@ -91,6 +91,10 @@ void flog::logger::set_backend(backend_t t) {
     m_backend = t;
 }
 
+void flog::logger::set_level(flog::level_t level) {
+    m_logging_level = level;
+}
+
 // Static instance
 flog::logger* flog::logger::instance() {
     if(!m_instance) {

@@ -17,7 +17,7 @@
 
 
 AC_PREREQ([2.69])
-AC_INIT([libflog], [0.1.0])
+AC_INIT([libflog], [0.2.0])
 AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -50,7 +50,7 @@ AC_CONFIG_FILES([Makefile
                  test/Makefile
                  libflog.pc])
 
-AC_SUBST([FLOG_SO_VERSION], [0:1:0])
-AC_SUBST([FLOG_API_VERSION], [0.1.0])
+AC_SUBST([FLOG_SO_VERSION], [1:0:1])
+AC_SUBST([FLOG_API_VERSION], [0.2.0])
 
 AC_OUTPUT

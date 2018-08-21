@@ -73,7 +73,8 @@ public:
     void flush(std::chrono::milliseconds timout) ;
 
     // Setters
-    void set_backend(backend_t t) ;
+    void set_backend(backend_t type) ;
+    void set_level(level_t level) ;
 
     // Static instance
     static logger* instance() ;
