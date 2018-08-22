@@ -26,12 +26,22 @@ libflog_la_LDFLAGS = -version-info $(FLOG_SO_VERSION)
 
 libflog_la_includedir = $(includedir)/flog
 libflog_la_include_HEADERS =  \
-    flog.hpp \
+    logger.hpp \
+    ostream-impl.hpp \
+    stderr-logger.hpp \
+    stdout-logger.hpp \
+    file-logger.hpp \
     semaphore.hpp
 
 libflog_la_SOURCES = \
     $(libflog_la_include_HEADERS) \
-    flog.cpp \
+    logger.cpp \
+    string-utils.hpp \
+    string-utils.cpp \
+    ostream-impl.cpp \
+    stderr-logger.cpp \
+    stdout-logger.cpp \
+    file-logger.cpp \
     semaphore.cpp
 
 libflog_la_LIBADD = \

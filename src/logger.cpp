@@ -16,19 +16,9 @@
  * along with libflog.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "flog.hpp"
+#include "logger.hpp"
 #include <iostream>
 
-static const char* level_str_map[] = {
-    "FATAL",
-    "ERROR",
-    " WARN",
-    " INFO",
-    "DEBUG",
-    "TRACE",
-};
-
-flog::logger* flog::logger::m_instance = nullptr;
 
 // Logging callbacks for initial logs
 void flog::logger::log(std::chrono::system_clock::time_point date,
@@ -87,20 +77,8 @@ void flog::logger::flush(std::chrono::milliseconds timout) {
 }
 
 // Setters
-void flog::logger::set_backend(backend_t t) {
-    m_backend = t;
-}
-
 void flog::logger::set_level(flog::level_t level) {
     m_logging_level = level;
-}
-
-// Static instance
-flog::logger* flog::logger::instance() {
-    if(!m_instance) {
-        m_instance = new logger;
-    }
-    return m_instance;
 }
 
 // Set external callback
@@ -111,7 +89,6 @@ void flog::logger::set_callback(std::function<void(log_data)> callee) {
 // constructor, to be private to avoid instantiation
 flog::logger::logger()
     : m_logging_level(level_t::ALL),
-      m_backend(backend_t::STDERR),
       m_is_running(true) {
     m_worker_thread = std::thread(&logger::worker, this);
 }
@@ -136,14 +113,7 @@ void flog::logger::worker() {
             continue;
         }
         guard.unlock();
-        switch(m_backend) {
-            case backend_t::STDERR:
-                log_cerr(d);
-                break;
-            case backend_t::DISABLED:
-            default:
-                break;
-        }
+        this->log(d);
     }
 }
 
@@ -185,48 +155,4 @@ void flog::logger::logc(level_t l, const char* format, va_list argptr) {
         m_callback(d);
     }
     m_queue_sem.notify();
-}
-
-// helper
-static const std::string tp2str(const std::chrono::system_clock::time_point& tp) {
-    using namespace std;
-    using namespace std::chrono;
-    auto ttime_t = system_clock::to_time_t(tp);
-    auto tp_sec = system_clock::from_time_t(ttime_t);
-    milliseconds ms = duration_cast<milliseconds>(tp - tp_sec);
-    std::tm* ttm = localtime(&ttime_t);
-    static const char date_time_format[] = "%Y-%m-%d %H:%M:%S";
-    char time_str[] = "yyyy-mm-dd HH:MM:SS.fff";
-    strftime(time_str, 23, date_time_format, ttm);
-    char final[2048];
-    #ifdef _WIN32
-    sprintf(final, "%s.%03lld", time_str, ms.count());
-    #else
-    sprintf(final, "%s.%03ld", time_str, ms.count());
-    #endif
-    return std::string(final);
-}
-
-
-// worker functions
-void flog::logger::log_cerr(const log_data& data) {
-    char buffer[2048];
-    if(data.is_initial) {
-        sprintf(buffer, "[%s][%s]: %s",
-                tp2str(data.date).c_str(),
-                level2str(data.level),
-                data.description.c_str());
-    } else {
-        sprintf(buffer, "                                : %s",
-                data.description.c_str());
-    }
-    std::cerr << buffer << std::endl;
-}
-
-const char* flog::logger::level2str(level_t l) {
-    return level_str_map[static_cast<int>(l) - 1];
-}
-
-std::string flog::log_data::level_str() const {
-    return level_str_map[static_cast<int>(level) - 1];
 }

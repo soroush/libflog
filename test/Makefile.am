@@ -24,12 +24,30 @@ AM_CPPFLAGS = \
     -I$(srcdir)/..
 
 check_PROGRAMS = \
-    cerr_logger
+    stderr_logger \
+    stderr_logger_mt \
+    file_logger_mt
 
-cerr_logger_SOURCES = \
-    cerr-logger.cpp
+stderr_logger_SOURCES = \
+    stderr-logger.cpp
 
-cerr_logger_LDADD = \
+stderr_logger_LDADD = \
+    ../src/libflog.la \
+    $(PTHREAD_LIBS) \
+    $(PTHREAD_CFLAGS)
+
+stderr_logger_mt_SOURCES = \
+    stderr-logger-mt.cpp
+
+stderr_logger_mt_LDADD = \
+    ../src/libflog.la \
+    $(PTHREAD_LIBS) \
+    $(PTHREAD_CFLAGS)
+
+file_logger_mt_SOURCES = \
+    file-logger-mt.cpp
+
+file_logger_mt_LDADD = \
     ../src/libflog.la \
     $(PTHREAD_LIBS) \
     $(PTHREAD_CFLAGS)

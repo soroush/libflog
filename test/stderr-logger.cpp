@@ -18,13 +18,10 @@
 #include <string>
 #include <random>
 #include <algorithm>
-#include <iostream>
-#include "../src/flog.hpp"
+#include <cassert>
+#include "../src/stderr-logger.hpp"
 
-using namespace flog;
-
-std::string random_string(size_t length)
-{
+std::string random_string(size_t length) {
     auto randchar = []() -> char {
         const char charset[] =
         "0123456789      "
@@ -38,16 +35,18 @@ std::string random_string(size_t length)
     return str;
 }
 
-int main(int argc, char *argv[])
-{
-    auto l = logger::instance();
-    l->set_backend(backend_t::STDERR);
+int main(int argc, char* argv[]) {
+    auto l = flog::stderr_logger::create();
     for(int i = 0; i < 1000; ++i) {
-        l->log(level_t::TRACE, "TRACE LOG");
-        l->log(level_t::DEBUG, "D RANDOM: \"%s\"", random_string(rand() % 10).c_str());
-        l->log(level_t::ERROR_, "E RANDOM: \"%s\"", random_string(rand() % 10).c_str());
-        l->log(level_t::FATAL, "F RANDOM: \"%s\"", random_string(rand() % 10).c_str());
+        l->log(flog::level_t::TRACE, "TRACE LOG");
+        l->log(flog::level_t::DEBUG,  "%s", random_string(rand() % 10).c_str());
+        l->log(flog::level_t::ERROR_, "%s", random_string(rand() % 10).c_str());
+        l->log(flog::level_t::FATAL,  "%s", random_string(rand() % 10).c_str());
     }
-    l->flush(std::chrono::milliseconds{});
+    l->flush(std::chrono::seconds{10});
+    auto l2 = flog::stderr_logger::create();
+    auto l3 = flog::stderr_logger::create();
+    assert(l == l2);
+    assert(l == l3);
     exit(EXIT_SUCCESS);
 }

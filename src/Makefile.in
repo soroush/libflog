@@ -155,7 +155,9 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libflog_la_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am__objects_1 =
-am_libflog_la_OBJECTS = $(am__objects_1) flog.lo semaphore.lo
+am_libflog_la_OBJECTS = $(am__objects_1) logger.lo string-utils.lo \
+	ostream-impl.lo stderr-logger.lo stdout-logger.lo \
+	file-logger.lo semaphore.lo
 libflog_la_OBJECTS = $(am_libflog_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -382,12 +384,22 @@ lib_LTLIBRARIES = libflog.la
 libflog_la_LDFLAGS = -version-info $(FLOG_SO_VERSION)
 libflog_la_includedir = $(includedir)/flog
 libflog_la_include_HEADERS = \
-    flog.hpp \
+    logger.hpp \
+    ostream-impl.hpp \
+    stderr-logger.hpp \
+    stdout-logger.hpp \
+    file-logger.hpp \
     semaphore.hpp
 
 libflog_la_SOURCES = \
     $(libflog_la_include_HEADERS) \
-    flog.cpp \
+    logger.cpp \
+    string-utils.hpp \
+    string-utils.cpp \
+    ostream-impl.cpp \
+    stderr-logger.cpp \
+    stdout-logger.cpp \
+    file-logger.cpp \
     semaphore.cpp
 
 libflog_la_LIBADD = \
@@ -472,8 +484,13 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/flog.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file-logger.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logger.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ostream-impl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/semaphore.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stderr-logger.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stdout-logger.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/string-utils.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

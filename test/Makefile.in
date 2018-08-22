@@ -104,7 +104,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-check_PROGRAMS = cerr_logger$(EXEEXT)
+check_PROGRAMS = stderr_logger$(EXEEXT) stderr_logger_mt$(EXEEXT) \
+	file_logger_mt$(EXEEXT)
 subdir = test
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_cxx_compile_stdcxx.m4 \
@@ -120,15 +121,23 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am_cerr_logger_OBJECTS = cerr-logger.$(OBJEXT)
-cerr_logger_OBJECTS = $(am_cerr_logger_OBJECTS)
+am_file_logger_mt_OBJECTS = file-logger-mt.$(OBJEXT)
+file_logger_mt_OBJECTS = $(am_file_logger_mt_OBJECTS)
 am__DEPENDENCIES_1 =
-cerr_logger_DEPENDENCIES = ../src/libflog.la $(am__DEPENDENCIES_1) \
+file_logger_mt_DEPENDENCIES = ../src/libflog.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+am_stderr_logger_OBJECTS = stderr-logger.$(OBJEXT)
+stderr_logger_OBJECTS = $(am_stderr_logger_OBJECTS)
+stderr_logger_DEPENDENCIES = ../src/libflog.la $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am_stderr_logger_mt_OBJECTS = stderr-logger-mt.$(OBJEXT)
+stderr_logger_mt_OBJECTS = $(am_stderr_logger_mt_OBJECTS)
+stderr_logger_mt_DEPENDENCIES = ../src/libflog.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -163,8 +172,10 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(cerr_logger_SOURCES)
-DIST_SOURCES = $(cerr_logger_SOURCES)
+SOURCES = $(file_logger_mt_SOURCES) $(stderr_logger_SOURCES) \
+	$(stderr_logger_mt_SOURCES)
+DIST_SOURCES = $(file_logger_mt_SOURCES) $(stderr_logger_SOURCES) \
+	$(stderr_logger_mt_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -531,10 +542,26 @@ AM_CPPFLAGS = \
     $(PTHREAD_CFLAGS) \
     -I$(srcdir)/..
 
-cerr_logger_SOURCES = \
-    cerr-logger.cpp
+stderr_logger_SOURCES = \
+    stderr-logger.cpp
 
-cerr_logger_LDADD = \
+stderr_logger_LDADD = \
+    ../src/libflog.la \
+    $(PTHREAD_LIBS) \
+    $(PTHREAD_CFLAGS)
+
+stderr_logger_mt_SOURCES = \
+    stderr-logger-mt.cpp
+
+stderr_logger_mt_LDADD = \
+    ../src/libflog.la \
+    $(PTHREAD_LIBS) \
+    $(PTHREAD_CFLAGS)
+
+file_logger_mt_SOURCES = \
+    file-logger-mt.cpp
+
+file_logger_mt_LDADD = \
     ../src/libflog.la \
     $(PTHREAD_LIBS) \
     $(PTHREAD_CFLAGS)
@@ -583,9 +610,17 @@ clean-checkPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-cerr_logger$(EXEEXT): $(cerr_logger_OBJECTS) $(cerr_logger_DEPENDENCIES) $(EXTRA_cerr_logger_DEPENDENCIES) 
-	@rm -f cerr_logger$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(cerr_logger_OBJECTS) $(cerr_logger_LDADD) $(LIBS)
+file_logger_mt$(EXEEXT): $(file_logger_mt_OBJECTS) $(file_logger_mt_DEPENDENCIES) $(EXTRA_file_logger_mt_DEPENDENCIES) 
+	@rm -f file_logger_mt$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(file_logger_mt_OBJECTS) $(file_logger_mt_LDADD) $(LIBS)
+
+stderr_logger$(EXEEXT): $(stderr_logger_OBJECTS) $(stderr_logger_DEPENDENCIES) $(EXTRA_stderr_logger_DEPENDENCIES) 
+	@rm -f stderr_logger$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(stderr_logger_OBJECTS) $(stderr_logger_LDADD) $(LIBS)
+
+stderr_logger_mt$(EXEEXT): $(stderr_logger_mt_OBJECTS) $(stderr_logger_mt_DEPENDENCIES) $(EXTRA_stderr_logger_mt_DEPENDENCIES) 
+	@rm -f stderr_logger_mt$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(stderr_logger_mt_OBJECTS) $(stderr_logger_mt_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -593,7 +628,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cerr-logger.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file-logger-mt.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stderr-logger-mt.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stderr-logger.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -818,9 +855,23 @@ recheck: all $(check_PROGRAMS)
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
-cerr_logger.log: cerr_logger$(EXEEXT)
-	@p='cerr_logger$(EXEEXT)'; \
-	b='cerr_logger'; \
+stderr_logger.log: stderr_logger$(EXEEXT)
+	@p='stderr_logger$(EXEEXT)'; \
+	b='stderr_logger'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+stderr_logger_mt.log: stderr_logger_mt$(EXEEXT)
+	@p='stderr_logger_mt$(EXEEXT)'; \
+	b='stderr_logger_mt'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+file_logger_mt.log: file_logger_mt$(EXEEXT)
+	@p='file_logger_mt$(EXEEXT)'; \
+	b='file_logger_mt'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

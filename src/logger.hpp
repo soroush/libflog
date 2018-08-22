@@ -31,11 +31,6 @@
 
 namespace flog {
 
-enum class backend_t {
-    DISABLED = 0,
-    // DATABASE = 1,
-    STDERR   = 2,
-};
 enum class level_t {
     OFF   = 0,  // The highest possible rank and is intended to turn off logging.
     FATAL = 1,  // Designates very severe error events that will presumably lead the application to abort.
@@ -72,41 +67,28 @@ public:
 
     void flush(std::chrono::milliseconds timout) ;
 
-    // Setters
-    void set_backend(backend_t type) ;
     void set_level(level_t level) ;
-
-    // Static instance
-    static logger* instance() ;
 
     // Set external callback
     void set_callback(std::function<void(log_data)> callee);
-private:
+protected:
+    virtual void log(const log_data& d) = 0;
     // constructor, to be private to avoid instantiation
     logger();
     ~logger();
 
+private:
     // thread callback
     void worker();
 
-    // static data members
-    static logger* m_instance;
-    // instance data members
     level_t m_logging_level;
-    backend_t m_backend;
     std::thread m_worker_thread;
     std::atomic_bool m_is_running;
     std::deque<log_data> m_log_queue;
     std::mutex m_queue_lock;
     flog::semaphore m_queue_sem;
-    // Backend functions for initial logs
-    void log(std::chrono::system_clock::time_point date, level_t l,
-             const char* format, va_list argptr) ;
-    // Backend functions for following logs
-    void logc(level_t l, const char* format, va_list argptr) ;
-    // worker functions
-    void log_cerr(const log_data& data);
-    const char* level2str(level_t l);
+    void log(std::chrono::system_clock::time_point date, level_t l, const char* format, va_list argptr);
+    void logc(level_t l, const char* format, va_list argptr);
     // External log callback
     std::function<void(log_data)> m_callback;
 };
