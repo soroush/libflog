@@ -35,7 +35,7 @@ after_build:
   - ps: 7z a $env:APPVEYOR_PROJECT_NAME-$env:compiler_tag-shared.zip C:\sysroot\*
 
 artifacts:
-  - path: *.zip
+  - path: $(APPVEYOR_PROJECT_NAME)-$(compiler_tag)-shared.zip
     type: zip
 
 skip_commits:
