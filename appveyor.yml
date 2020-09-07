@@ -2,53 +2,39 @@ version: 0.1.{build}
 image: Visual Studio 2019
 environment:
   matrix:
-    - GENERATOR: '"Visual Studio 14 2015"'
-      BUILD_TYPE: Debug
-      WCHAR: 'OFF'
-      BUILD_SHARED: 'OFF'
-    - GENERATOR: '"Visual Studio 14 2015"'
-      BUILD_TYPE: Release
-      WCHAR: 'ON'
-      BUILD_SHARED: 'OFF'
     - GENERATOR: '"Visual Studio 14 2015 Win64"'
       BUILD_TYPE: Debug
-      WCHAR: 'ON'
-      BUILD_SHARED: 'OFF'
     - GENERATOR: '"Visual Studio 14 2015 Win64"'
       BUILD_TYPE: Release
-      WCHAR: 'ON'
-      BUILD_SHARED: 'OFF'
+    - GENERATOR: '"Visual Studio 14 2015 Win64"'
+      BUILD_TYPE: Debug
+    - GENERATOR: '"Visual Studio 14 2015 Win64"'
+      BUILD_TYPE: Release
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Debug
-      WCHAR: 'ON'
-      BUILD_SHARED: 'OFF'
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Release
-      WCHAR: 'OFF'
-      BUILD_SHARED: 'OFF'
-    - GENERATOR: '"Visual Studio 15 2017 Win64"'
+    - GENERATOR: '"Visual Studio 16 2019"'
+      BUILD_TYPE: Debug
+    - GENERATOR: '"Visual Studio 16 2019"'
       BUILD_TYPE: Release
-      WCHAR: 'OFF'
-      BUILD_SHARED: 'ON'
-    - GENERATOR: '"Visual Studio 16 2019 Win64"'
-      BUILD_TYPE: Release
-      WCHAR: 'OFF'
-      BUILD_SHARED: 'OFF'
-    - GENERATOR: '"Visual Studio 16 2019 Win64"'
-      BUILD_TYPE: Release
-      WCHAR: 'OFF'
-      BUILD_SHARED: 'ON'
 
 build_script:
-  - cmd: >-
+  - ps: >-
+      mkdir C:\sysroot
+
       mkdir build
+
       cd build
+
       cmake .. -G %GENERATOR% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DCMAKE_INSTALL_PREFIX=c:\sysroot
+
       cmake --build . --config %BUILD_TYPE%
+      
       cmake --build . --target install
 
 after_build:
-  - cmd: 7z a .\%APPVEYOR_PROJECT_NAME%-%GENERATOR%-%BUILD_TYPE%.zip C:\sysroot\*
+  - ps: 7z a .\%APPVEYOR_PROJECT_NAME%-%GENERATOR%-%BUILD_TYPE%.zip C:\sysroot\*
 
 artifacts:
   - path: .\*.zip
