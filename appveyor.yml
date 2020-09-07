@@ -23,7 +23,7 @@ build_script:
 
       cd build
 
-      cmake .. -G "$env:generator" -DCMAKE_INSTALL_PREFIX=$env:APPVEYOR_BUILD_FOLDER\install
+      cmake .. -G "$env:generator" -DCMAKE_INSTALL_PREFIX=..\install
 
       cmake --build . --config $env:build_type
 
