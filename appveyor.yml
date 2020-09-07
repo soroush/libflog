@@ -19,23 +19,21 @@ environment:
 
 build_script:
   - ps: >-
-      mkdir c:\sysroot
-
-      mkdir build
+      mkdir build,install,deploy
 
       cd build
 
-      cmake .. -G "$env:generator" -DCMAKE_BUILD_TYPE=$env:build_type -DCMAKE_INSTALL_PREFIX=c:\sysroot
+      cmake .. -G "$env:generator" -DCMAKE_INSTALL_PREFIX=$env:APPVEYOR_BUILD_FOLDER\install
 
       cmake --build . --config $env:build_type
 
       cmake --build . --target install
 
 after_build:
-  - ps: 7z a $env:APPVEYOR_PROJECT_NAME-$env:compiler_tag-shared.zip C:\sysroot\*
+  - ps: 7z a $env:APPVEYOR_BUILD_FOLDER\deploy\$env:APPVEYOR_PROJECT_NAME-$env:compiler_tag-shared.zip $env:APPVEYOR_BUILD_FOLDER\install\*
 
 artifacts:
-  - path: $(APPVEYOR_PROJECT_NAME)-$(compiler_tag)-shared.zip
+  - path: $(APPVEYOR_BUILD_FOLDER)\deploy\$(APPVEYOR_PROJECT_NAME)-$(compiler_tag)-shared.zip
     type: zip
 
 skip_commits:
