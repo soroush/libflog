@@ -19,7 +19,7 @@
 #include <random>
 #include <algorithm>
 #include <iostream>
-#include "../src/flog.hpp"
+#include <flog.hpp>
 
 using namespace flog;
 
@@ -40,6 +40,7 @@ std::string random_string(size_t length)
 
 int main(int argc, char *argv[])
 {
+    std::cout << "Hello!";
     auto l = logger::instance();
     l->set_backend(backend_t::STDERR);
     for(int i = 0; i < 1000; ++i) {
@@ -48,6 +49,6 @@ int main(int argc, char *argv[])
         l->log(level_t::ERROR_, "E RANDOM: \"%s\"", random_string(rand() % 10).c_str());
         l->log(level_t::FATAL, "F RANDOM: \"%s\"", random_string(rand() % 10).c_str());
     }
-    l->flush(std::chrono::milliseconds{});
+    l->flush(std::chrono::milliseconds{1000});
     exit(EXIT_SUCCESS);
 }

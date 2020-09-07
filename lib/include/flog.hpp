@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 - Soroush Rabiei <soroush@ametisco.ir>
+ * Copyright 2018-2020 - Soroush Rabiei <soroush@ametisco.ir>
  * This file is part of libflog.
  *
  * libflog is free software: you can redistribute it and/or modify
@@ -27,14 +27,16 @@
 #include <atomic>
 #include <queue>
 #include <functional>
+#include "flog-export.hpp"
 #include "semaphore.hpp"
 
 namespace flog {
 
 enum class backend_t {
     DISABLED = 0,
-    // DATABASE = 1,
+    //DATABASE = 1,
     STDERR   = 2,
+    //STDLOG   = 2,
 };
 enum class level_t {
     OFF   = 0,  // The highest possible rank and is intended to turn off logging.
@@ -55,7 +57,7 @@ struct log_data {
     std::string level_str() const;
 };
 
-class logger {
+class LIBFLOG_API logger {
 public:
     // Logging callbacks for initial logs
     void log(std::chrono::system_clock::time_point date,

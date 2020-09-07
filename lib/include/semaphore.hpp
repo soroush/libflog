@@ -23,9 +23,10 @@
 #include <mutex>
 #include <condition_variable>
 #include <chrono>
+#include "flog-export.hpp"
 
 namespace flog {
-class semaphore {
+class LIBFLOG_API semaphore {
     public:
         semaphore(int count = 0);
         void notify();
