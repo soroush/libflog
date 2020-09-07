@@ -33,7 +33,7 @@ after_build:
   - ps: 7z a $env:APPVEYOR_BUILD_FOLDER\deploy\$env:APPVEYOR_PROJECT_NAME-$env:compiler_tag-shared.zip $env:APPVEYOR_BUILD_FOLDER\install\*
 
 artifacts:
-  - path: $(APPVEYOR_BUILD_FOLDER)\deploy\$(APPVEYOR_PROJECT_NAME)-$(compiler_tag)-shared.zip
+  - path: deploy\$(APPVEYOR_PROJECT_NAME)-$(compiler_tag)-shared.zip
     type: zip
 
 skip_commits:
