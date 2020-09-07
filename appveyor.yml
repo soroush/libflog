@@ -19,7 +19,7 @@ environment:
 
 build_script:
   - ps: >-
-      mkdir C:\sysroot
+      mkdir c:\sysroot
 
       mkdir build
 
@@ -32,10 +32,10 @@ build_script:
       cmake --build . --target install
 
 after_build:
-  - ps: 7z a .\$env:APPVEYOR_PROJECT_NAME-$env:compiler_tag-shared.zip C:\sysroot\*
+  - ps: 7z a $env:APPVEYOR_PROJECT_NAME-$env:compiler_tag-shared.zip C:\sysroot\*
 
 artifacts:
-  - path: **\*.zip
+  - path: *.zip
     type: zip
 
 skip_commits:
