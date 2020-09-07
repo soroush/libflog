@@ -1,23 +1,25 @@
 version: 0.1.{build}
+
 image: Visual Studio 2019
+
 environment:
   matrix:
-    - GENERATOR: '"Visual Studio 14 2015 Win64"'
-      BUILD_TYPE: Debug
-    - GENERATOR: '"Visual Studio 14 2015 Win64"'
-      BUILD_TYPE: Release
-    - GENERATOR: '"Visual Studio 14 2015 Win64"'
-      BUILD_TYPE: Debug
-    - GENERATOR: '"Visual Studio 14 2015 Win64"'
-      BUILD_TYPE: Release
-    - GENERATOR: '"Visual Studio 15 2017 Win64"'
-      BUILD_TYPE: Debug
-    - GENERATOR: '"Visual Studio 15 2017 Win64"'
-      BUILD_TYPE: Release
-    - GENERATOR: '"Visual Studio 16 2019"'
-      BUILD_TYPE: Debug
-    - GENERATOR: '"Visual Studio 16 2019"'
-      BUILD_TYPE: Release
+    - generator: '"Visual Studio 14 2015 Win64"'
+      build_type: Debug
+    - generator: '"Visual Studio 14 2015 Win64"'
+      build_type: Release
+    - generator: '"Visual Studio 14 2015 Win64"'
+      build_type: Debug
+    - generator: '"Visual Studio 14 2015 Win64"'
+      build_type: Release
+    - generator: '"Visual Studio 15 2017 Win64"'
+      build_type: Debug
+    - generator: '"Visual Studio 15 2017 Win64"'
+      build_type: Release
+    - generator: '"Visual Studio 16 2019"'
+      build_type: Debug
+    - generator: '"Visual Studio 16 2019"'
+      build_type: Release
 
 build_script:
   - ps: >-
@@ -27,14 +29,14 @@ build_script:
 
       cd build
 
-      cmake .. -G %GENERATOR% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DCMAKE_INSTALL_PREFIX=c:\sysroot
+      cmake .. -G "$env:generator" -DCMAKE_BUILD_TYPE=$env:build_type -DCMAKE_INSTALL_PREFIX=c:\sysroot
 
-      cmake --build . --config %BUILD_TYPE%
-      
+      cmake --build . --config $env:build_type
+
       cmake --build . --target install
 
-after_build:
-  - ps: 7z a .\%APPVEYOR_PROJECT_NAME%-%GENERATOR%-%BUILD_TYPE%.zip C:\sysroot\*
+# after_build:
+#   - ps: 7z a .\%APPVEYOR_PROJECT_NAME%-%generator%-%BUILD_TYPE%.zip C:\sysroot\*
 
 artifacts:
   - path: .\*.zip
